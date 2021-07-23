@@ -1,0 +1,21 @@
+{
+    "name": "confluent-php/kafka-rest-client",
+    "description": "A kafka rest client based on confluent's kafka-rest",
+    "type": "library",
+    "require": {
+        "guzzlehttp/guzzle": "^7.3"
+    },
+    "license": "Apache",
+    "authors": [
+        {
+            "name": "luxin",
+            "email": "luxin88@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "Confluent\\KafkaRest\\": "src/"
+        }
+    }
+}
