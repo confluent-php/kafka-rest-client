@@ -4,7 +4,7 @@
 namespace Confluent\KafkaRest\Producer;
 
 
-class ProducerAbstract
+abstract class ProducerAbstract
 {
 
 }
