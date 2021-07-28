@@ -12,7 +12,6 @@ class Producer extends ProducerAbstract
 
     public static function instance(Config $config) {
         self::instance($config);
-
         $url = $config::$protocol . '://' . $config::$connection;
         if(!isset(self::$_instance[$url])){
             self::$_instance[$url] = new Producer();
