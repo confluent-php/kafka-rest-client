@@ -3,7 +3,11 @@
     "description": "A kafka rest client based on confluent's kafka-rest",
     "type": "library",
     "require": {
+        "php": "^7.4",
         "guzzlehttp/guzzle": "^7.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
     },
     "license": "Apache-2.0",
     "authors": [

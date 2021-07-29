@@ -5,16 +5,26 @@ namespace Confluent\KafkaRest\V3;
 
 
 use Confluent\KafkaRest\Config;
-use Confluent\KafkaRest\Producer\ProducerAbstract;
+use Confluent\KafkaRest\Features\ProducerAbstract;
+use GuzzleHttp\Client;
 
 class Producer extends ProducerAbstract
 {
-    public static function instance(Config $config) {
-        self::instance($config);
-        $url = $config::$protocol . '://' . $config::$connection . '/v3';
-        if(!isset(self::$_instance[$url])){
-            self::$_instance[$url] = new \Confluent\KafkaRest\V2\Producer();
+    public static function instance(Config $config)
+    {
+        $url = $config->getUrlV3();
+        if (!isset(self::$_instance[$url])) {
+            self::$_instance[$url] = new static($config);
         }
         return self::$_instance[$url];
+    }
+
+    public function __construct(Config $config)
+    {
+        $this->httpClient = new Client(
+            [
+                'base_uri' => $config->getUrlV3(),
+            ]
+        );
     }
 }
