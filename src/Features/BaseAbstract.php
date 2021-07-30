@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 namespace Confluent\KafkaRest\Features;
 
@@ -9,7 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
 
-abstract class ProducerAbstract
+abstract class BaseAbstract
 {
     protected static array $_instance = [];
     protected Client $httpClient;
@@ -18,11 +18,11 @@ abstract class ProducerAbstract
      * @param string $method
      * @param string $uri
      * @param array $jsonArray
-     * @return mixed
+     * @return array
      * @throws GuzzleException
      * @throws KafkaRestException
      */
-    protected function request(string $method, string $uri, array $jsonArray)
+    protected function request(string $method, string $uri, array $jsonArray): array
     {
         try {
             $result = $this->httpClient->request($method, $uri, [
@@ -32,14 +32,18 @@ abstract class ProducerAbstract
                 ]
             ]);
 
-            $contents = $result->getBody()->getContents();
-            return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+            if ($result->getStatusCode() == 204) {
+                return [];
+            } else {
+                $contents = $result->getBody()->getContents();
+                return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+            }
 
         } catch (BadResponseException $e) {
             $contents = $e->getResponse()->getBody()->getContents();
             $exception = json_decode($contents);
             throw new KafkaRestException($exception['message'], $exception['error_code']);
-        }catch (\JsonException $jsonException) {
+        } catch (\JsonException $jsonException) {
             throw new KafkaRestException('解析KafkaRest服务器响应出错，请检查服务器状态');
         }
     }

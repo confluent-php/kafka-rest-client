@@ -14,7 +14,8 @@ class Config
         if (empty($connection)) {
             throw new \Exception('connection cannot be empty');
         }
-        if($protocol !== 'http' || $protocol !== 'https'){
+
+        if(!in_array($protocol, ['http', 'https'])){
             throw new \Exception('protocol error');
         }
         $this->connection = $connection;

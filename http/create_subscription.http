@@ -1,0 +1,10 @@
+POST http://8.130.174.131:8082/consumers/dbgroup/instances/dbgrp_inst/subscription
+Content-Type: application/vnd.kafka.json.v2+json
+
+{
+  "topics": [
+    "test-topic"
+  ]
+}
+
+###

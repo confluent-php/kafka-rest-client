@@ -10,6 +10,8 @@ use GuzzleHttp\Client;
 
 class Producer extends ProducerAbstract
 {
+    const CONTENT_TYPE = 'application/json';
+
     public static function instance(Config $config)
     {
         $url = $config->getUrlV3();

@@ -4,23 +4,43 @@
 namespace Confluent\KafkaRest\Features;
 
 
-use Confluent\KafkaRest\Config;
+use Confluent\KafkaRest\Exception\KafkaRestException;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\GuzzleException;
 
 abstract class ConsumerAbstract
 {
-    protected static $_instance = [];
+    protected static array $_instance = [];
+    protected Client $httpClient;
 
     /**
-     * @param Config $config
-     * @throws \Exception
+     * @param string $method
+     * @param string $uri
+     * @param array $jsonArray
+     * @return mixed
+     * @throws GuzzleException
+     * @throws KafkaRestException
      */
-    public static function instance(Config $config)
+    protected function request(string $method, string $uri, array $jsonArray)
     {
-        if($config::$connection === ''){
-            throw new \Exception('connection cannot be null');
-        }
-        if($config::$protocol !== 'http' || $config::$protocol !== 'https'){
-            throw new \Exception('protocol error');
+        try {
+            $result = $this->httpClient->request($method, $uri, [
+                'json' => $jsonArray,
+                'headers' => [
+                    'Content-Type' => static::CONTENT_TYPE
+                ]
+            ]);
+
+            $contents = $result->getBody()->getContents();
+            return json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
+
+        } catch (BadResponseException $e) {
+            $contents = $e->getResponse()->getBody()->getContents();
+            $exception = json_decode($contents);
+            throw new KafkaRestException($exception['message'], $exception['error_code']);
+        }catch (\JsonException $jsonException) {
+            throw new KafkaRestException('解析KafkaRest服务器响应出错，请检查服务器状态');
         }
     }
 }
